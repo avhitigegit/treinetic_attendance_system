@@ -9,6 +9,8 @@ import java.util.Date;
 @Document(collection = "leave")
 public class Leave implements Serializable {
 
+    private static final long serialVersionUID = 4865903039190150223L;
+
     @Id
     private String id;
     private Date date;

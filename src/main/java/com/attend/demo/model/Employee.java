@@ -10,6 +10,8 @@ import java.util.Date;
 @Document(collection = "employee")
 public class Employee implements Serializable {
 
+    private static final long serialVersionUID = 4865903039190150223L;
+
     @Id
     private String id;
     private String employeeId;
@@ -21,19 +23,7 @@ public class Employee implements Serializable {
     private Date updatedAt;
     private String password;
     private String emailStatus;
-
-    public Employee(String id, String employeeId, String fullName, String email, String contact, String image, Date createdAt, Date updatedAt, String password, String emailStatus) {
-        this.id = id;
-        this.employeeId = employeeId;
-        this.fullName = fullName;
-        this.email = email;
-        this.contact = contact;
-        this.image = image;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.password = password;
-        this.emailStatus = emailStatus;
-    }
+    private String role;
 
     public String getId() {
         return id;
@@ -113,5 +103,13 @@ public class Employee implements Serializable {
 
     public void setEmailStatus(String emailStatus) {
         this.emailStatus = emailStatus;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

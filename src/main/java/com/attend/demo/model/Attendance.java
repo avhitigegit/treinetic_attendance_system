@@ -9,6 +9,8 @@ import java.util.Date;
 @Document(collection = "attendance")
 public class Attendance implements Serializable {
 
+    private static final long serialVersionUID = 4865903039190150223L;
+
     @Id
     private String id;
     private Date date;
@@ -17,16 +19,6 @@ public class Attendance implements Serializable {
     private String approvalStatus;
     private String approvalType;
     private Date createdAt;
-
-    public Attendance(String id, Date date, Date timeIn, Date timeOut, String approvalStatus, String approvalType, Date createdAt) {
-        this.id = id;
-        this.date = date;
-        this.timeIn = timeIn;
-        this.timeOut = timeOut;
-        this.approvalStatus = approvalStatus;
-        this.approvalType = approvalType;
-        this.createdAt = createdAt;
-    }
 
     public String getId() {
         return id;

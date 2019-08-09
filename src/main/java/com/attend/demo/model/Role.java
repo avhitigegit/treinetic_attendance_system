@@ -8,6 +8,8 @@ import java.io.Serializable;
 @Document(collection = "role")
 public class Role implements Serializable {
 
+    private static final long serialVersionUID = 4865903039190150223L;
+
     @Id
     private String id;
     private String roleType;

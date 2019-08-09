@@ -1,4 +1,7 @@
 package com.attend.demo.exception;
 
-public class EmployeeNotFoundException {
+public class EmployeeNotFoundException extends RuntimeException {
+    public EmployeeNotFoundException() {
+        super();
+    }
 }

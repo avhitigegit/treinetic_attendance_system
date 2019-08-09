@@ -1,4 +1,4 @@
 package com.attend.demo.service;
 
-public interface LeaveService {
+public class LeaveService {
 }
