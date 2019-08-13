@@ -1,5 +1,7 @@
 package com.attend.demo.dto;
 
+import com.attend.demo.model.Employee;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +16,7 @@ public class AttendanceDto implements Serializable {
     private String approvalStatus;
     private String approvalType;
     private Date createdAt;
+    private Employee employee;
 
     public String getId() {
         return id;
@@ -69,5 +72,13 @@ public class AttendanceDto implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }

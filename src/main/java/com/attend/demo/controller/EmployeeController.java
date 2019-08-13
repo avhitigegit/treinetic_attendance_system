@@ -22,7 +22,7 @@ public class EmployeeController {
 
     //Generate A New Employee And Return Token As A String To Response Body
     @ResponseBody
-    @RequestMapping(value = "/createEmployee", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/create-new-employee", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<String> createEmployee(@RequestBody Employee employee, HttpServletResponse response) {
         EmployeeDto employeeDto = new EmployeeDto();
         BeanUtils.copyProperties(employee, employeeDto);
@@ -32,7 +32,7 @@ public class EmployeeController {
 
     //Get The verification from generated empployee
     @ResponseBody
-    @RequestMapping(value = "/getVerification", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/get-verification", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<Boolean> getEmailVerificationCode(@RequestBody VerificationDto verificationDto) {
         Boolean status = emplyeeService.getEmailVerificationCode(verificationDto.getPinFromUser(), verificationDto.getToken());
         return ResponseEntity.ok(status);
@@ -40,7 +40,7 @@ public class EmployeeController {
 
     // Retrieve All Employees
     @ResponseBody
-    @RequestMapping(value = "/allEmp", method = RequestMethod.GET)
+    @RequestMapping(value = "/all-employees", method = RequestMethod.GET)
     public ResponseEntity<List<Employee>> getAllEmployees() {
         List<Employee> employeeList = emplyeeService.getAllEmployees();
         return ResponseEntity.ok(employeeList);

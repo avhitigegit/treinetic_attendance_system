@@ -18,6 +18,7 @@ public class Attendance implements Serializable {
     private String approvalStatus;
     private String approvalType;
     private Date createdAt;
+    private Employee employee;
 
     public String getId() {
         return id;
@@ -73,5 +74,13 @@ public class Attendance implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }
