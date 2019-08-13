@@ -10,7 +10,6 @@ import java.util.Random;
 
 @Service
 public class EmployeeUtillService {
-
     @Autowired
     EmployeeRepository employeeRepository;
 
@@ -22,8 +21,8 @@ public class EmployeeUtillService {
 
     //Check Employee Already Exist
     public boolean employeeIsAlreadyExist(String employeeId) {
+        Boolean exist;
         Employee employee = employeeRepository.findEmployeeById(employeeId);
-        Boolean exist = null;
         exist = employee != null;
         return exist;
     }
@@ -37,7 +36,7 @@ public class EmployeeUtillService {
 
     //Checking pins are matching
     public Boolean matchingEmailGeneratedPin(String userPin, String generatedPin) {
-        Boolean status = null;
+        Boolean status;
         status = userPin.equalsIgnoreCase(generatedPin);
         return status;
     }
@@ -48,8 +47,4 @@ public class EmployeeUtillService {
         String hashedPassword = passwordEncoder.encode(password);
         return hashedPassword;
     }
-
-    //When Login
-    //passwordEncoder.matches(senderPassword,hashedPasswordFromDB);
-
 }

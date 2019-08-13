@@ -8,17 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
 public class JwtTokenUtil implements Serializable {
-
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
     private static final long serialVersionUID = -2550185165626007488L;
-
     @Value("${jwt.secret}")
     private String secret;
 
@@ -60,7 +56,6 @@ public class JwtTokenUtil implements Serializable {
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string
     private String doGenerateToken(Map<String, Object> claims, String subject) {
-
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
@@ -71,4 +66,30 @@ public class JwtTokenUtil implements Serializable {
         final String username = getUsernameFromToken(token);
         return (username.equals(employee.getEmail()) && !isTokenExpired(token));
     }
+
+    //token generate at the time of employee registration
+    public String generateTokenForUserPin(String generatedPin, String userEmail) {
+        Map<String, Object> claims = new HashMap<>();
+        return doGenerateTokenForGeneratedPin(claims, generatedPin, userEmail);
+    }
+
+    private String doGenerateTokenForGeneratedPin(Map<String, Object> claims, String generatedPin, String userEmail) {
+        claims.put("useremail", userEmail);
+        return Jwts.builder().setClaims(claims).setSubject(generatedPin).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
+    }
+
+    //retrieve username and pin from token which generate at the time of employee registration
+    public List<String> getUserNPinFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(secret)
+                .parseClaimsJws(token).getBody();
+        List<String> list = new ArrayList<>();
+        String userEmail = claims.get("useremail", String.class);
+        String generatedPin = getClaimFromToken(token, Claims::getSubject);
+        list.add(userEmail);
+        list.add(generatedPin);
+        return list;
+    }
+
 }

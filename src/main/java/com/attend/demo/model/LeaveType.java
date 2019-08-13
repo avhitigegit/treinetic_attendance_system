@@ -7,17 +7,11 @@ import java.io.Serializable;
 
 @Document(collection = "leaveType")
 public class LeaveType implements Serializable {
-
     private static final long serialVersionUID = 4865903039190150223L;
 
     @Id
     private String id;
     private String leaveType;
-
-    public LeaveType(String id, String leaveType) {
-        this.id = id;
-        this.leaveType = leaveType;
-    }
 
     public String getId() {
         return id;

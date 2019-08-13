@@ -71,14 +71,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-
-        <!--        <filters>-->
-        <!--            <filter>-->
-        <!--                <filter>sensitiveFormHeaderFilter</filter>-->
-        <!--                <filter>org.springframework.web.filter.DelegatingFilterProxy</filter>-->
-        <!--            </filter>-->
-        <!--        </filters>-->
-
     </build>
 
 </project>

@@ -9,10 +9,13 @@ import org.springframework.stereotype.Repository;
 public interface EmployeeRepository extends MongoRepository<Employee, String> {
 
     //    MongoDB JSON-based Query Methods and Field Restriction
-    @Query("{ 'id' : ?0 }")
+    @Query("{ 'employeeId' : ?0 }")
     Employee findEmployeeById(String empid);
 
     @Query("{ 'email' : ?0 }")
     Employee findEmployeeByEmail(String email);
+
+    @Query("{ 'id' : ?0 }")
+    Employee findByIdEmp(String id);
 
 }

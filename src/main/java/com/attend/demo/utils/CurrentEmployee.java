@@ -37,11 +37,6 @@ public class CurrentEmployee {
         CurrentEmployee.setEmployee(employee, null);
     }
 
-//    public static  Map<String, String> getExtras() {
-//        var cEmployee = getCurrentEmployee();
-//        return cEmployee != null ? cEmployee.extras : null;
-//    }
-
     private static CurrentEmployee getCurrentEmployee() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.isAuthenticated() && authentication.getPrincipal() instanceof CurrentEmployee) {

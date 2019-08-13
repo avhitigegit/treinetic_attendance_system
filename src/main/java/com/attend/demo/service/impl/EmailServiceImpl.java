@@ -3,24 +3,31 @@ package com.attend.demo.service.impl;
 import com.attend.demo.service.EmailService;
 import com.attend.demo.service.utill.EmployeeUtillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import javax.mail.*;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
 @Service
+@Component
 public class EmailServiceImpl implements EmailService {
-
     @Autowired
     EmployeeUtillService employeeUtillService;
 
-    public String sendMail(String receiverAddress) throws MessagingException, IOException {
+    @Value("${senderEmail}")
+    private String senderEmail;
+    @Value("${password}")
+    private String password;
+
+    public String sendMail(String receiverAddress, Integer generatedPin) {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
@@ -29,32 +36,21 @@ public class EmailServiceImpl implements EmailService {
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("emailSender@gmail.com", "password");
+                return new PasswordAuthentication(senderEmail, password);
             }
         });
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("emailSender@gmail.com", false));
-
-        //Pin Generate and send to User Email
-        Integer generatedPin = employeeUtillService.generatePin();
-
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverAddress));
-        msg.setSubject("Confirm The Email With Four Digit Code");
-        //Set  generated number
-        msg.setContent(generatedPin, "text/html");
-        msg.setSentDate(new Date());
-
-        MimeBodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent("Tutorials point email", "text/html");
-
-        Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(messageBodyPart);
-        MimeBodyPart attachPart = new MimeBodyPart();
-
-        attachPart.attachFile("/var/tmp/image19.png");
-        multipart.addBodyPart(attachPart);
-        msg.setContent(multipart);
-        Transport.send(msg);
+        try {
+            msg.setFrom(new InternetAddress(senderEmail, false));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverAddress));
+            msg.setSubject("Confirm The Email With Four Digit Code");
+            //Set  generated number
+            msg.setContent(generatedPin, "text/html");
+            msg.setSentDate(new Date());
+            Transport.send(msg);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return generatedPin.toString();
     }
 

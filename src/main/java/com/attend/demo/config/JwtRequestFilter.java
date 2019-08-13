@@ -1,12 +1,10 @@
 package com.attend.demo.config;
 
 import com.attend.demo.model.Employee;
-import com.attend.demo.repository.LoginRepository;
-import com.attend.demo.service.LoginService;
+import com.attend.demo.repository.EmployeeRepository;
+import com.attend.demo.utils.CurrentEmployee;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,18 +14,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
     @Autowired
-    private LoginService loginService;
-
-    @Autowired
-    private LoginRepository loginRepository;
-
+    private EmployeeRepository employeeRepository;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
@@ -36,7 +27,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         final String requestTokenHeader = request.getHeader("Authorization");
-
         String email = null;
         String jwtToken = null;
 
@@ -64,50 +54,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // Once we get the token validate it.
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            Employee employee = this.loginRepository.findEmployeeByUserName(email);
+            Employee employee = this.employeeRepository.findEmployeeByEmail(email);
             // if token is valid configure Spring Security to manually set
             // authentication
             if (jwtTokenUtil.validateToken(jwtToken, employee)) {
-
-                List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority("ADMIN"));
-
-                var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(employee, null, authorities);
+                CurrentEmployee.setEmployee(employee);
                 //In securitycontextholder set the authenticated current logged user.
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                final String token = jwtTokenUtil.generateToken(employee);
-                response.addHeader("Authorization", token);
                 chain.doFilter(request, response);
             }
         }
     }
 }
-
-
-//// Once we get the token validate it.
-//        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//
-//                Employee employee = this.loginRepository.findEmployeeByUserName(email);
-//                // if token is valid configure Spring Security to manually set
-//                // authentication
-//                if (jwtTokenUtil.validateToken(jwtToken, employee)) {
-//
-//                CurrentEmployee.setEmployee(employee);
-//
-//
-////                //Authenticated the user
-////                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-////                        employee, null);
-////                usernamePasswordAuthenticationToken
-////                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-////                // After setting the Authentication in the context, we specify
-////                // that the current user is authenticated. So it passes the
-////                // Spring Security Configurations successfully.
-////
-////                //In securitycontextholder set the authenticated current logged user.
-////                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-////            }
-//                }
-////        chain.doFilter(request, response);
-//                }

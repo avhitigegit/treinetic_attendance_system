@@ -8,7 +8,6 @@ import java.util.Date;
 
 @Document(collection = "attendance")
 public class Attendance implements Serializable {
-
     private static final long serialVersionUID = 4865903039190150223L;
 
     @Id

@@ -1,5 +1,6 @@
 package com.attend.demo.service;
 
+import com.attend.demo.config.JwtTokenUtil;
 import com.attend.demo.dto.EmployeeDto;
 import com.attend.demo.exception.EmployeeAlreadyExistException;
 import com.attend.demo.model.Employee;
@@ -9,94 +10,108 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public class EmplyeeService {
-
     @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
     EmployeeUtillService employeeUtillService;
     @Autowired
     EmailService emailService;
-
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
 
     //Generate A New Employee
-    public Employee createEmployee(EmployeeDto employeeDto) throws MessagingException, IOException {
+    public String createEmployee(EmployeeDto employeeDto) {
         Employee employee = new Employee();
+        String token = null;
 
         try {
             if (employeeDto != null && employeeUtillService.isValidEmail(employeeDto.getEmail())
                     && employeeUtillService.employeeIsAlreadyExist(employeeDto.getEmployeeId()) == false) {
                 //Password Hashed
                 employeeDto.setPassword(employeeUtillService.bCryptPassword(employeeDto.getPassword()));
-
                 //Send Email With Random Pin
-                //String genratedPin = emailService.sendMail(employeeDto.getEmail());
-
-                //Checking Both Pins Are Ok
-//                String userPin = null; //get the pin from user
-//                if(employeeUtillService.matchingEmailGeneratedPin(userPin,genratedPin) == true){
-//                    //Send employee object to Admin to Set the emailStatus true
-//
-//                }
-
+                Integer genratedPin = employeeUtillService.generatePin();
+                emailService.sendMail(employeeDto.getEmail(), genratedPin);
                 //Save the employee to database
                 BeanUtils.copyProperties(employeeDto, employee);
-                employee = employeeRepository.save(employee);
+                employeeRepository.save(employee);
+                token = jwtTokenUtil.generateTokenForUserPin(genratedPin.toString(), employeeDto.getEmail());
             }
         } catch (EmployeeAlreadyExistException e) {
             e.printStackTrace();
         }
-        return employee;
+        return token;
     }
 
     //User Enter 4 Digit Generated Number.And if valid Send it to admin
-    public void enterGeneratedPin(String userPin) {
-        String genratedPin = "emailService.sendMail(employeeDto.getEmail());";
+    public Boolean getEmailVerificationCode(String pinFromUser, String token) {
+        Boolean status = null;
+        List<String> userNPinList = jwtTokenUtil.getUserNPinFromToken(token);
+        String userEmailOfToken = userNPinList.get(0);
+        String genratedPinOfToken = userNPinList.get(1);
+        Employee employeeOfToken = employeeRepository.findEmployeeByEmail(userEmailOfToken);
         //Checking Both Pins Are Ok
-        if (employeeUtillService.matchingEmailGeneratedPin(userPin, genratedPin) == true) {
+        if (employeeUtillService.matchingEmailGeneratedPin(pinFromUser, genratedPinOfToken) == true) {
             //Send employee object to Admin to Set the emailStatus true
-
+            if (employeeOfToken != null) {
+                employeeOfToken.setEmailStatus("TRUE");
+                status = true;
+            }
+        } else {
+            employeeOfToken.setEmailStatus("FALSE");
+            status = false;
         }
+        employeeRepository.save(employeeOfToken);
+        return status;
     }
 
     public List<Employee> getAllEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        return employees;
+        List<Employee> employeeList = employeeRepository.findAll();
+        return employeeList;
     }
 
     public Employee findEmployeeById(String empid) {
         return employeeRepository.findEmployeeById(empid);
     }
 
-
-    public Employee updateEmployee(String id, Employee employee) {
-        Employee employeeObj = employeeRepository.findEmployeeById(id);
-
-        employeeObj.setFullName(employee.getFullName());
-        employeeObj.setEmail(employee.getEmail());
-        employeeObj.setContact(employee.getContact());
-        employeeObj.setUpdatedAt(employee.getUpdatedAt());
-        employeeObj.setImage(employee.getImage());
-
-        Employee updatedEmployee = null;
-
-        if (updatedEmployee == null) {
-
-            updatedEmployee = employeeRepository.save(employeeObj);
-
+    public String passwordResetRequest(String email) {
+        //validate the user
+        Employee employee = employeeRepository.findEmployeeByEmail(email);
+        String token = null;
+        //if user valide,
+        if (employee != null) {
+            //generate a pin
+            Integer genratedPin = employeeUtillService.generatePin();
+            //send the email to use with the generated code
+            emailService.sendMail(email, genratedPin);
+            //generate token from pin and employeeid
+            token = jwtTokenUtil.generateTokenForUserPin(genratedPin.toString(), employee.getId());
         }
-
-        return updatedEmployee;
+        //send the email to user with the pin
+        return token;
     }
 
-    //    @Override
-    public void deleteEmployee(String id) {
-        Employee employeeObj = employeeRepository.findEmployeeById(id);
-        employeeRepository.delete(employeeObj);
+    //User Enter 4 Digit Generated Number.And if valid
+    //Save the new Password
+    public Boolean getPinForpasswordResetNSaveNewPassword(String pinFromUser, String token, String password) {
+        Boolean status = null;
+        List<String> userNPinList = jwtTokenUtil.getUserNPinFromToken(token);
+        String user = userNPinList.get(0);
+        String genratedPin = userNPinList.get(1);
+        Employee employeeOfToken = employeeRepository.findByIdEmp(user);
+        //Checking Both Pins Are Ok
+        if (employeeUtillService.matchingEmailGeneratedPin(pinFromUser, genratedPin) && employeeOfToken != null) {
+            //Send employee object to Admin to Set the emailStatus true
+            employeeOfToken.setPassword(employeeUtillService.bCryptPassword(password));
+            status = true;
+            employeeRepository.save(employeeOfToken);
+        } else {
+            status = false;
+        }
+        return status;
     }
 }
