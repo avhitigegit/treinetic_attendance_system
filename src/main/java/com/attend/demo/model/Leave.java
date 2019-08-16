@@ -15,6 +15,9 @@ public class Leave implements Serializable {
     private Date date;
     private Date createdAt;
     private String status;
+    private LeaveType leaveTypeId;
+    private Employee employeeId;
+    private Employee approvedEmpId;
 
     public String getId() {
         return id;
@@ -46,5 +49,29 @@ public class Leave implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LeaveType getLeaveTypeId() {
+        return leaveTypeId;
+    }
+
+    public void setLeaveTypeId(LeaveType leaveTypeId) {
+        this.leaveTypeId = leaveTypeId;
+    }
+
+    public Employee getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Employee employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public Employee getApprovedEmpId() {
+        return approvedEmpId;
+    }
+
+    public void setApprovedEmpId(Employee approvedEmpId) {
+        this.approvedEmpId = approvedEmpId;
     }
 }

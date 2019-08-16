@@ -25,8 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // dont authenticate this particular request
                 .authorizeRequests().antMatchers(
                 "/login",
-                "/employee/createEmployee",
-                "/employee/getVerification",
+                "/employee/create-new-employee",
+                "/employee/get-verification",
                 "/employee/pwd-reset/{email}",
                 "/employee/pwd-reset/verification"
         ).permitAll().

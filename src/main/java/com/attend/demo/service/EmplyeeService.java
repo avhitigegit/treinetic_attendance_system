@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +23,8 @@ public class EmplyeeService {
     EmailService emailService;
     @Autowired
     JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    RoleService roleService;
 
     //Generate A New Employee
     public String createEmployee(EmployeeDto employeeDto) {
@@ -33,6 +36,7 @@ public class EmplyeeService {
                     && employeeUtillService.employeeIsAlreadyExist(employeeDto.getEmployeeId()) == false) {
                 //Password Hashed
                 employeeDto.setPassword(employeeUtillService.bCryptPassword(employeeDto.getPassword()));
+                employeeDto.setUpdatedAt(null);
                 //Send Email With Random Pin
                 Integer genratedPin = employeeUtillService.generatePin();
                 emailService.sendMail(employeeDto.getEmail(), genratedPin);
@@ -50,6 +54,7 @@ public class EmplyeeService {
     //User Enter 4 Digit Generated Number.And if valid Send it to admin
     public Boolean getEmailVerificationCode(String pinFromUser, String token) {
         Boolean status = null;
+        Date now = new Date();
         List<String> userNPinList = jwtTokenUtil.getUserNPinFromToken(token);
         String userEmailOfToken = userNPinList.get(0);
         String genratedPinOfToken = userNPinList.get(1);
@@ -65,6 +70,7 @@ public class EmplyeeService {
             employeeOfToken.setEmailStatus("FALSE");
             status = false;
         }
+        employeeOfToken.setUpdatedAt(now);
         employeeRepository.save(employeeOfToken);
         return status;
     }
@@ -99,6 +105,7 @@ public class EmplyeeService {
     //Save the new Password
     public Boolean getPinForpasswordResetNSaveNewPassword(String pinFromUser, String token, String password) {
         Boolean status = null;
+        Date now = new Date();
         List<String> userNPinList = jwtTokenUtil.getUserNPinFromToken(token);
         String user = userNPinList.get(0);
         String genratedPin = userNPinList.get(1);
@@ -108,6 +115,7 @@ public class EmplyeeService {
             //Send employee object to Admin to Set the emailStatus true
             employeeOfToken.setPassword(employeeUtillService.bCryptPassword(password));
             status = true;
+            employeeOfToken.setUpdatedAt(now);
             employeeRepository.save(employeeOfToken);
         } else {
             status = false;

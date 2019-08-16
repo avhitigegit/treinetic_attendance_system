@@ -1,5 +1,7 @@
 package com.attend.demo.dto;
 
+import com.attend.demo.model.Role;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -17,7 +19,7 @@ public class EmployeeDto implements Serializable {
     private Date updatedAt;
     private String password;
     private String emailStatus;
-    private String role;
+    private Role roleId;
 
     public String getId() {
         return id;
@@ -99,11 +101,11 @@ public class EmployeeDto implements Serializable {
         this.emailStatus = emailStatus;
     }
 
-    public String getRole() {
-        return role;
+    public Role getRoleId() {
+        return roleId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleId(Role roleId) {
+        this.roleId = roleId;
     }
 }

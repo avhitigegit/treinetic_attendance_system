@@ -20,11 +20,21 @@ public class AttendanceController {
 
     //Generate A New Attendance
     @ResponseBody
-    @RequestMapping(value = "/create-new-attend", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/create-new-attendance", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<Attendance> createAttendance(@RequestBody Attendance attendance) {
         AttendanceDto attendanceDto = new AttendanceDto();
         BeanUtils.copyProperties(attendance, attendanceDto);
         attendance = attendanceService.createAttendance(attendanceDto);
+        return ResponseEntity.ok(attendance);
+    }
+
+    //Approval set Attendance
+    @ResponseBody
+    @RequestMapping(value = "/approval-attendance", method = RequestMethod.POST, headers = "Accept=application/json")
+    public ResponseEntity<Attendance> approvalAttendance(@RequestBody Attendance attendance) {
+        AttendanceDto attendanceDto = new AttendanceDto();
+        BeanUtils.copyProperties(attendance, attendanceDto);
+        attendance = attendanceService.approvalAttendance(attendanceDto);
         return ResponseEntity.ok(attendance);
     }
 }

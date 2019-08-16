@@ -20,18 +20,21 @@ public class AttendanceService {
     @Autowired
     AttendanceUtillService attendanceUtillService;
 
-    //Generate A New Employee
+    //Generate A New Attendance
     public Attendance createAttendance(AttendanceDto attendanceDto) {
         Attendance attendance = new Attendance();
+        Employee employee = CurrentEmployee.getEmployee();
         try {
-            if (attendanceDto != null) {
-                boolean validDate = attendanceUtillService.isValidDate(attendanceDto.getDate());
+            if (attendanceDto != null && attendanceUtillService.isValidDate(attendanceDto.getDate()) == true) {
+//                boolean validDate = attendanceUtillService.isValidDate(attendanceDto.getDate());
                 //out time is must be greater than  in time
-                if (attendanceDto.getTimeIn().getTime() < attendanceDto.getTimeOut().getTime()) {
-                    Employee employee = CurrentEmployee.getEmployee();
+                if (attendanceDto.getTimeIn().getTime() < attendanceDto.getTimeOut().getTime() && attendanceDto.getApprovalStatus() == null) {
                     Date now = new Date();
                     attendanceDto.setCreatedAt(now);
-                    attendanceDto.setEmployee(employee);
+                    attendanceDto.setApprovalStatus("PENDING");
+                    attendanceDto.setEmployeeId(employee);
+                    attendanceDto.setApprovalType(null);
+                    attendanceDto.setApprovedId(null);
                     BeanUtils.copyProperties(attendanceDto, attendance);
                     attendance = attendanceRepository.save(attendance);
                 }
@@ -40,5 +43,35 @@ public class AttendanceService {
             e.printStackTrace();
         }
         return attendance;
+    }
+
+    //at now
+    //set all the approvalStatus,approvalType,approvedId
+    //Approval set Attendance
+    public Attendance approvalAttendance(AttendanceDto attendanceDto) {
+        Attendance attendance = new Attendance();
+        try {
+            if (attendanceDto.getApprovedId() != null && !attendanceDto.getApprovalStatus().equals("PENDING")) {
+                if (attendanceDto.getApprovalStatus().equals("APPROVED")) {
+                    attendanceDto.setApprovalType("PRESENT");
+                } else if (attendanceDto.getApprovalStatus().equals("REJECT")) {
+                    attendanceDto.setApprovalType("ABSENT");
+                }
+                BeanUtils.copyProperties(attendanceDto, attendance);
+                attendance = attendanceRepository.save(attendance);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return attendance;
+    }
+
+    //Send All Pending Attendance To Admin
+    public Attendance sendAllPendingAttendanceToAdmin(String adminEmail) {
+        Attendance pending = null;
+        if (adminEmail != null) {
+            pending = attendanceRepository.findAllPENDINGattendance("PENDING");
+        }
+        return pending;
     }
 }

@@ -22,7 +22,7 @@ public class Employee implements Serializable {
     private Date updatedAt;
     private String password;
     private String emailStatus;
-    private String role;
+    private Role roleId;
 
     public String getId() {
         return id;
@@ -104,11 +104,11 @@ public class Employee implements Serializable {
         this.emailStatus = emailStatus;
     }
 
-    public String getRole() {
-        return role;
+    public Role getRoleId() {
+        return roleId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleId(Role roleId) {
+        this.roleId = roleId;
     }
 }

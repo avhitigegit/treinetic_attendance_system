@@ -18,7 +18,8 @@ public class Attendance implements Serializable {
     private String approvalStatus;
     private String approvalType;
     private Date createdAt;
-    private Employee employee;
+    private Employee employeeId;
+    private Employee approvedId;
 
     public String getId() {
         return id;
@@ -76,11 +77,19 @@ public class Attendance implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public Employee getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(Employee employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public Employee getApprovedId() {
+        return approvedId;
+    }
+
+    public void setApprovedId(Employee approvedId) {
+        this.approvedId = approvedId;
     }
 }

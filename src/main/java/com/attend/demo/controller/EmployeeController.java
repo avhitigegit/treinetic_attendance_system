@@ -30,7 +30,7 @@ public class EmployeeController {
         return ResponseEntity.ok(token);
     }
 
-    //Get The verification from generated empployee
+    //Get The verification from generated employee
     @ResponseBody
     @RequestMapping(value = "/get-verification", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<Boolean> getEmailVerificationCode(@RequestBody VerificationDto verificationDto) {
