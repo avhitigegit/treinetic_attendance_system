@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Document(collection = "attendance")
@@ -13,11 +15,12 @@ public class Attendance implements Serializable {
     @Id
     private String id;
     private Date date;
-    private Date timeIn;
-    private Date timeOut;
+    private LocalTime timeIn;
+    private LocalTime timeOut;
     private String approvalStatus;
     private String approvalType;
-    private Date createdAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private Employee employeeId;
     private Employee approvedId;
 
@@ -37,19 +40,19 @@ public class Attendance implements Serializable {
         this.date = date;
     }
 
-    public Date getTimeIn() {
+    public LocalTime getTimeIn() {
         return timeIn;
     }
 
-    public void setTimeIn(Date timeIn) {
+    public void setTimeIn(LocalTime timeIn) {
         this.timeIn = timeIn;
     }
 
-    public Date getTimeOut() {
+    public LocalTime getTimeOut() {
         return timeOut;
     }
 
-    public void setTimeOut(Date timeOut) {
+    public void setTimeOut(LocalTime timeOut) {
         this.timeOut = timeOut;
     }
 
@@ -69,12 +72,20 @@ public class Attendance implements Serializable {
         this.approvalType = approvalType;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Employee getEmployeeId() {

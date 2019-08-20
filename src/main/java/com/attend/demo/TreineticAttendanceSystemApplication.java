@@ -9,5 +9,4 @@ public class TreineticAttendanceSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(TreineticAttendanceSystemApplication.class, args);
     }
-
 }

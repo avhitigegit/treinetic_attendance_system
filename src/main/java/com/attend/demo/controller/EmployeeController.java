@@ -5,6 +5,8 @@ import com.attend.demo.dto.PasswordRestDto;
 import com.attend.demo.dto.VerificationDto;
 import com.attend.demo.model.Employee;
 import com.attend.demo.service.EmplyeeService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController {
+    private static final Logger LOGGER = LogManager.getLogger(EmployeeController.class);
     @Autowired
     private EmplyeeService emplyeeService;
 
@@ -24,9 +27,12 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping(value = "/create-new-employee", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<String> createEmployee(@RequestBody Employee employee, HttpServletResponse response) {
+        LOGGER.info("Enter to method createEmployee() ", employee);
+//        LOGGER.error("Error level log message");
         EmployeeDto employeeDto = new EmployeeDto();
         BeanUtils.copyProperties(employee, employeeDto);
         String token = emplyeeService.createEmployee(employeeDto);
+        LOGGER.info("Exit from method createEmployee() ");
         return ResponseEntity.ok(token);
     }
 
@@ -42,7 +48,9 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping(value = "/all-employees", method = RequestMethod.GET)
     public ResponseEntity<List<Employee>> getAllEmployees() {
+        LOGGER.info("Enter to method getAllEmployees() ");
         List<Employee> employeeList = emplyeeService.getAllEmployees();
+        LOGGER.info("Exit from method getAllEmployees() ");
         return ResponseEntity.ok(employeeList);
     }
 

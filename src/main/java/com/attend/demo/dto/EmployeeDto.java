@@ -3,7 +3,7 @@ package com.attend.demo.dto;
 import com.attend.demo.model.Role;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class EmployeeDto implements Serializable {
 
@@ -15,8 +15,8 @@ public class EmployeeDto implements Serializable {
     private String email;
     private String contact;
     private String image;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String password;
     private String emailStatus;
     private Role roleId;
@@ -69,19 +69,19 @@ public class EmployeeDto implements Serializable {
         this.image = image;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
