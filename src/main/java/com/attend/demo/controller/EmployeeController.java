@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -26,21 +25,24 @@ public class EmployeeController {
     //Generate A New Employee And Return Token As A String To Response Body
     @ResponseBody
     @RequestMapping(value = "/create-new-employee", method = RequestMethod.POST, headers = "Accept=application/json")
-    public ResponseEntity<String> createEmployee(@RequestBody Employee employee, HttpServletResponse response) {
-        LOGGER.info("Enter to method createEmployee() ", employee);
-//        LOGGER.error("Error level log message");
+//     throws EmployeeAlreadyExistException, EmailInvalidException, ClientRequestNotCompleteException
+    public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
+        LOGGER.info("Enter to method createEmployee() in EmployeeController ");
+        //LOGGER.error("Error level log message");
         EmployeeDto employeeDto = new EmployeeDto();
         BeanUtils.copyProperties(employee, employeeDto);
         String token = emplyeeService.createEmployee(employeeDto);
-        LOGGER.info("Exit from method createEmployee() ");
-        return ResponseEntity.ok(token);
+        LOGGER.info("Exit from method createEmployee() in EmployeeController ");
+        return ResponseEntity.ok().body(token);
     }
 
     //Get The verification from generated employee
     @ResponseBody
     @RequestMapping(value = "/get-verification", method = RequestMethod.POST, headers = "Accept=application/json")
     public ResponseEntity<Boolean> getEmailVerificationCode(@RequestBody VerificationDto verificationDto) {
+        LOGGER.info("Enter to method getEmailVerificationCode() in EmployeeController ");
         Boolean status = emplyeeService.getEmailVerificationCode(verificationDto.getPinFromUser(), verificationDto.getToken());
+        LOGGER.info("Exit from method getEmailVerificationCode() in EmployeeController ");
         return ResponseEntity.ok(status);
     }
 
@@ -48,9 +50,9 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping(value = "/all-employees", method = RequestMethod.GET)
     public ResponseEntity<List<Employee>> getAllEmployees() {
-        LOGGER.info("Enter to method getAllEmployees() ");
+        LOGGER.info("Enter to method getAllEmployees() in EmployeeController ");
         List<Employee> employeeList = emplyeeService.getAllEmployees();
-        LOGGER.info("Exit from method getAllEmployees() ");
+        LOGGER.info("Exit from method getAllEmployees() in EmployeeController ");
         return ResponseEntity.ok(employeeList);
     }
 
@@ -58,7 +60,9 @@ public class EmployeeController {
     @ResponseBody
     @RequestMapping(value = "/{empid}", method = RequestMethod.GET)
     public ResponseEntity<Employee> findEmployeeById(@PathVariable(value = "empid") String empid) {
+        LOGGER.info("Enter to method findEmployeeById() in EmployeeController ");
         Employee employee = emplyeeService.findEmployeeById(empid);
+        LOGGER.info("Exit from method findEmployeeById() in EmployeeController ");
         return ResponseEntity.ok(employee);
     }
 
