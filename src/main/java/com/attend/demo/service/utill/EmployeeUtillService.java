@@ -34,10 +34,11 @@ public class EmployeeUtillService {
     }
 
     //Check Employee Already Exist
-    public boolean employeeIsAlreadyExist(String employeeId) {
+    public boolean employeeIsAlreadyExist(String employeeId, String email) {
         Boolean exist;
         Employee employee = employeeRepository.findEmployeeById(employeeId);
-        if (employee != null) {
+        Employee employeeEmail = employeeRepository.findEmployeeByEmail(email);
+        if (employee != null || employeeEmail != null) {
             throw new EmployeeAlreadyExistException("Employee Already Exist Exception.");
         } else {
             exist = false;

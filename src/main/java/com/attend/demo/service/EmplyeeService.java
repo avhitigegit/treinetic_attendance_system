@@ -36,7 +36,7 @@ public class EmplyeeService {
         Employee employee = new Employee();
         LocalDateTime now = LocalDateTime.now();
         if (employeeDto != null && employeeUtillService.isValidEmail(employeeDto.getEmail())
-                && employeeUtillService.employeeIsAlreadyExist(employeeDto.getEmployeeId()) == false) {
+                && employeeUtillService.employeeIsAlreadyExist(employeeDto.getEmployeeId(), employeeDto.getEmail()) == false) {
             //Password Hashed
             employeeDto.setPassword(employeeUtillService.bCryptPassword(employeeDto.getPassword()));
             employeeDto.setCreatedAt(now);

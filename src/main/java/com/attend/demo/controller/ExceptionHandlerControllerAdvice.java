@@ -16,6 +16,20 @@ public class ExceptionHandlerControllerAdvice {
 
     LocalDateTime now = LocalDateTime.now();
 
+//    Token Exception
+
+    @ExceptionHandler(AuthenticationTokenInvalidException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public @ResponseBody
+    ExceptionResponse authenticationTokenInvalidException(final AuthenticationTokenInvalidException exception, final HttpServletRequest request) {
+        ExceptionResponse error = new ExceptionResponse();
+        error.setErrorMessage(exception.getMessage());
+        error.setErrorUrl(request.getRequestURI());
+        error.setStatusCode(401);
+        error.setTimestamp(now);
+        return error;
+    }
+
 //    Login Controller Exceptions
 
     @ExceptionHandler(AuthenticationFailedException.class)
