@@ -16,8 +16,7 @@ public class ExceptionHandlerControllerAdvice {
 
     LocalDateTime now = LocalDateTime.now();
 
-//    Token Exception
-
+    //    Token Exception
     @ExceptionHandler(AuthenticationTokenInvalidException.class)
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public @ResponseBody
@@ -30,8 +29,7 @@ public class ExceptionHandlerControllerAdvice {
         return error;
     }
 
-//    Login Controller Exceptions
-
+    //    Login Controller Exceptions
     @ExceptionHandler(AuthenticationFailedException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public @ResponseBody
@@ -44,8 +42,7 @@ public class ExceptionHandlerControllerAdvice {
         return error;
     }
 
-//Employee Controller Exceptions
-
+    //Employee Controller Exceptions
     @ExceptionHandler(EmployeeAlreadyExistException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public @ResponseBody
@@ -113,4 +110,28 @@ public class ExceptionHandlerControllerAdvice {
 //    Leave Controller Exceptions
 
 
+    //    RabbitMQ Exception
+    @ExceptionHandler(MessageNotFoundException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public @ResponseBody
+    ExceptionResponse messageNotFoundException(final MessageNotFoundException exception, final HttpServletRequest request) {
+        ExceptionResponse error = new ExceptionResponse();
+        error.setErrorMessage(exception.getMessage());
+        error.setErrorUrl(request.getRequestURI());
+        error.setStatusCode(404);
+        error.setTimestamp(now);
+        return error;
+    }
+
+    @ExceptionHandler(MessageNotSendException.class)
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public @ResponseBody
+    ExceptionResponse messageNotSendException(final MessageNotSendException exception, final HttpServletRequest request) {
+        ExceptionResponse error = new ExceptionResponse();
+        error.setErrorMessage(exception.getMessage());
+        error.setErrorUrl(request.getRequestURI());
+        error.setStatusCode(404);
+        error.setTimestamp(now);
+        return error;
+    }
 }
