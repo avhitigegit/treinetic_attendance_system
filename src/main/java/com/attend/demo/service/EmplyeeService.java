@@ -2,10 +2,13 @@ package com.attend.demo.service;
 
 import com.attend.demo.config.JwtTokenUtil;
 import com.attend.demo.dto.EmployeeDto;
-import com.attend.demo.exception.EmployeeAlreadyExistException;
+import com.attend.demo.exception.ClientRequestNotCompleteException;
+import com.attend.demo.exception.EmployeeNotFoundException;
 import com.attend.demo.model.Employee;
 import com.attend.demo.repository.EmployeeRepository;
 import com.attend.demo.service.utill.EmployeeUtillService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.List;
 
 @Service
 public class EmplyeeService {
+    private static final Logger LOGGER = LogManager.getLogger(EmplyeeService.class);
     @Autowired
     EmployeeRepository employeeRepository;
     @Autowired
@@ -28,27 +32,24 @@ public class EmplyeeService {
 
     //Generate A New Employee
     public String createEmployee(EmployeeDto employeeDto) {
+        String token = null;
         Employee employee = new Employee();
         LocalDateTime now = LocalDateTime.now();
-        String token = null;
-
-        try {
-            if (employeeDto != null && employeeUtillService.isValidEmail(employeeDto.getEmail())
-                    && employeeUtillService.employeeIsAlreadyExist(employeeDto.getEmployeeId()) == false) {
-                //Password Hashed
-                employeeDto.setPassword(employeeUtillService.bCryptPassword(employeeDto.getPassword()));
-                employeeDto.setCreatedAt(now);
-                employeeDto.setUpdatedAt(null);
-                //Send Email With Random Pin
-                Integer genratedPin = employeeUtillService.generatePin();
-                emailService.sendMail(employeeDto.getEmail(), genratedPin);
-                //Save the employee to database
-                BeanUtils.copyProperties(employeeDto, employee);
-                employeeRepository.save(employee);
-                token = jwtTokenUtil.generateTokenForUserPin(genratedPin.toString(), employeeDto.getEmail());
-            }
-        } catch (EmployeeAlreadyExistException e) {
-            e.printStackTrace();
+        if (employeeDto != null && employeeUtillService.isValidEmail(employeeDto.getEmail())
+                && employeeUtillService.employeeIsAlreadyExist(employeeDto.getEmployeeId(), employeeDto.getEmail()) == false) {
+            //Password Hashed
+            employeeDto.setPassword(employeeUtillService.bCryptPassword(employeeDto.getPassword()));
+            employeeDto.setCreatedAt(now);
+            employeeDto.setUpdatedAt(null);
+            //Send Email With Random Pin
+            Integer genratedPin = employeeUtillService.generatePin();
+            emailService.sendMail(employeeDto.getEmail(), genratedPin);
+            //Save the employee to database
+            BeanUtils.copyProperties(employeeDto, employee);
+            employeeRepository.save(employee);
+            token = jwtTokenUtil.generateTokenForUserPin(genratedPin.toString(), employeeDto.getEmail());
+        } else {
+            throw new ClientRequestNotCompleteException("The Request Cannot Be Fulfilled Due To Bad Syntax Exception.");
         }
         return token;
     }
@@ -83,7 +84,15 @@ public class EmplyeeService {
     }
 
     public Employee findEmployeeById(String empid) {
-        return employeeRepository.findEmployeeById(empid);
+        LOGGER.info("Enter to method findEmployeeById() in EmplyeeService ");
+        Employee employee = employeeRepository.findEmployeeById(empid);
+        if (employee == null) {
+            LOGGER.info("Exit from method findEmployeeById() in EmplyeeService ");
+            throw new EmployeeNotFoundException("Employee Not Found Exception.");
+        } else {
+            LOGGER.info("Exit from method findEmployeeById() in EmplyeeService ");
+            return employee;
+        }
     }
 
     public String passwordResetRequest(String email) {
@@ -98,6 +107,8 @@ public class EmplyeeService {
             emailService.sendMail(email, genratedPin);
             //generate token from pin and employeeid
             token = jwtTokenUtil.generateTokenForUserPin(genratedPin.toString(), employee.getId());
+        } else {
+            throw new EmployeeNotFoundException("Such A Email Not Found Exception.");
         }
         //send the email to user with the pin
         return token;
@@ -107,7 +118,7 @@ public class EmplyeeService {
     //Save the new Password
     public Boolean getPinForpasswordResetNSaveNewPassword(String pinFromUser, String token, String password) {
         LocalDateTime now = LocalDateTime.now();
-        Boolean status = null;
+        Boolean status = false;
         List<String> userNPinList = jwtTokenUtil.getUserNPinFromToken(token);
         String user = userNPinList.get(0);
         String genratedPin = userNPinList.get(1);
@@ -120,7 +131,7 @@ public class EmplyeeService {
             employeeOfToken.setUpdatedAt(now);
             employeeRepository.save(employeeOfToken);
         } else {
-            status = false;
+            throw new EmployeeNotFoundException("Unable To Get The User From Token. Invalid Token Exception.");
         }
         return status;
     }

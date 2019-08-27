@@ -1,7 +1,8 @@
 package com.attend.demo.exception;
 
 public class EmployeeNotFoundException extends RuntimeException {
-    public EmployeeNotFoundException() {
-        super();
+    //404 - resource not found
+    public EmployeeNotFoundException(String message) {
+        super(message);
     }
 }

@@ -1,5 +1,7 @@
 package com.attend.demo.controller;
 
+import com.attend.demo.dto.EmployeeDto;
+import com.attend.demo.exception.AuthenticationFailedException;
 import com.attend.demo.model.Employee;
 import com.attend.demo.model.JwtRequest;
 import com.attend.demo.service.LoginService;
@@ -21,10 +23,15 @@ public class JwtAuthenticationController {
 
     //Login Controller.
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<Employee> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) throws Exception {
+    public ResponseEntity<Employee> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) {
         final Employee employee = new Employee();
-        BeanUtils.copyProperties(loginService.loadEmployeeByLogin(authenticationRequest), employee);
-        CurrentEmployee.setEmployee(employee);
-        return ResponseEntity.ok(employee);
+        EmployeeDto employeeDto = loginService.loadEmployeeByLogin(authenticationRequest);
+        if (employeeDto != null) {
+            BeanUtils.copyProperties(employeeDto, employee);
+            CurrentEmployee.setEmployee(employee);
+            return ResponseEntity.ok(employee);
+        } else {
+            throw new AuthenticationFailedException("Authentication Failed. Should Not Repeat The Request Without Modification Exception.");
+        }
     }
 }

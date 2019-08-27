@@ -1,7 +1,8 @@
 package com.attend.demo.exception;
 
 public class EmployeeAlreadyExistException extends RuntimeException {
-    public EmployeeAlreadyExistException() {
-        super();
+    //409 - resource already exist
+    public EmployeeAlreadyExistException(String message) {
+        super(message);
     }
 }

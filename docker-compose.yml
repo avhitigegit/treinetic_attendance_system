@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+
+  #  rabbitmq:
+  #    ports:
+  #      - ":"
+  #    expose:
+  #      - ":"
+  #    image:
+  #    environment:
+
+  treinetic-attendance-system:
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    image: treinetic-attendance-system
+    environment:
+      TREINETIC_ATT_MONGO_URL: mongodb://mongo:27017/treinetic_attendance
+
+
+  #   environment :
+  #     CONFIG_URL: http://viconfigserver:4090
+  #     CONFIG_PROFILE: docker
+
