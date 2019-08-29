@@ -1,5 +1,7 @@
 package com.attend.demo.config;
 
+import com.attend.demo.controller.ExceptionHandlerControllerAdvice;
+import com.attend.demo.exception.AuthenticationTokenInvalidException;
 import com.attend.demo.model.Employee;
 import com.attend.demo.repository.EmployeeRepository;
 import com.attend.demo.utils.CurrentEmployee;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,15 +19,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtRequestFilter extends OncePerRequestFilter implements HandlerInterceptor {
     @Autowired
     private EmployeeRepository employeeRepository;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private ExceptionHandlerControllerAdvice exceptionHandlerControllerAdvice;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ExpiredJwtException {
 
         final String requestTokenHeader = request.getHeader("Authorization");
         String email = null;
@@ -47,6 +52,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 System.out.println("Unable to get JWT Token");
             } catch (ExpiredJwtException e) {
                 System.out.println("JWT Token has expired");
+                throw new AuthenticationTokenInvalidException("Token Has Been Expired");
             }
         }
 

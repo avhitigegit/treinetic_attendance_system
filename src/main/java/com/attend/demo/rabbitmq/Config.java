@@ -4,55 +4,76 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.context.annotation.Configuration;
 
-@EnableScheduling
+@Configuration
 public class Config {
 
-    public static final String EXCHANGE_NAME = "appExchange";
-    public static final String QUEUE_GENERIC_NAME = "appGenericQueue";
-    public static final String QUEUE_SPECIFIC_NAME = "appSpecificQueue";
-    public static final String ROUTING_KEY = "messages.key";
+
+    static final String topicExchangeName = "spring-boot-exchange";
+
+    static final String queueName = "spring-boot";
 
     @Bean
-    public TopicExchange appExchange() {
-        return new TopicExchange(EXCHANGE_NAME);
+    Queue queue() {
+        return new Queue(queueName, false);
     }
 
     @Bean
-    public Queue appQueueGeneric() {
-        return new Queue(QUEUE_GENERIC_NAME);
+    TopicExchange exchange() {
+        return new TopicExchange(topicExchangeName);
     }
 
     @Bean
-    public Queue appQueueSpecific() {
-        return new Queue(QUEUE_SPECIFIC_NAME);
+    Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(queueName);
     }
 
-    @Bean
-    public Binding declareBindingGeneric() {
-        return BindingBuilder.bind(appQueueGeneric()).to(appExchange()).with(ROUTING_KEY);
-    }
+//    @Bean
+//    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
+//                                             MessageListenerAdapter listenerAdapter) {
+//        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//        container.setQueueNames(queueName);
+//        container.setMessageListener(listenerAdapter);
+//        return container;
+//    }
 
     @Bean
-    public Binding declareBindingSpecific() {
-        return BindingBuilder.bind(appQueueSpecific()).to(appExchange()).with(ROUTING_KEY);
+    MessageListenerAdapter listenerAdapter(RabbitMQReceive receiver) {
+        return new MessageListenerAdapter(receiver, "receiveMessage");
     }
+///////////////////////////////////////////////////////////////////////////////////////////////
+// public class Config implements RabbitListenerConfigurer {
+//    @Bean
+//    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+//        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+//        rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
+//        return rabbitTemplate;
+//    }
+//
+//    @Bean
+//    public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
+//        return new Jackson2JsonMessageConverter();
+//    }
+//
+//    @Bean
+//    MessageHandlerMethodFactory messageHandlerMethodFactory() {
+//        DefaultMessageHandlerMethodFactory messageHandlerMethodFactory = new DefaultMessageHandlerMethodFactory();
+//        messageHandlerMethodFactory.setMessageConverter(consumerJackson2MessageConverter());
+//        return messageHandlerMethodFactory;
+//    }
+//
+//    @Override
+//    public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
+//        registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
+//    }
+//
+//    @Bean
+//    public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
+//        return new MappingJackson2MessageConverter();
+//    }
 
-    // You can comment the two methods below to use the default serialization / deserialization (instead of JSON)
-    @Bean
-    public RabbitTemplate rabbitTemplate(final ConnectionFactory connectionFactory) {
-        final var rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(producerJackson2MessageConverter());
-        return rabbitTemplate;
-    }
-
-    @Bean
-    public Jackson2JsonMessageConverter producerJackson2MessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
 }

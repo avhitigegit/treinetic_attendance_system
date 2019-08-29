@@ -8,6 +8,12 @@ public class CustomMessageDto implements Serializable {
     private int priority;
     private boolean status;
 
+    public CustomMessageDto(String msg, int priority, boolean status) {
+        this.msg = msg;
+        this.priority = priority;
+        this.status = status;
+    }
+
     public String getMsg() {
         return msg;
     }
