@@ -22,3 +22,7 @@ ENTRYPOINT ["java", "-jar", "treinetic-attendance-system.jar"]
 #To run docker image
 #docker run -p 8080:8080 treinetic-attendance-system
 #docker run -p 27017:27017 -v /Users/amrithahitige/MongoDB/data:/data/db --name mongodb mongo
+#docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management      correct
+#-p myportnumber:theirportnumber    -p 1818:5672
+#docker run -d --hostname my-rabbit --name rabbitmqdocker -p 15672:15672 rabbitmq:3-management
+#docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 rabbitmq:3          correct

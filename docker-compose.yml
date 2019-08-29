@@ -9,13 +9,14 @@ services:
     expose:
       - "27017"
 
-  #  rabbitmq:
-  #    ports:
-  #      - ":"
-  #    expose:
-  #      - ":"
-  #    image:
-  #    environment:
+  rabbitmq:
+    container_name: rabbitmq
+    image: 'rabbitmq:management'
+    #    image: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
 
   treinetic-attendance-system:
     ports:
@@ -25,7 +26,17 @@ services:
     image: treinetic-attendance-system
     environment:
       TREINETIC_ATT_MONGO_URL: mongodb://mongo:27017/treinetic_attendance
+      TREINETIC_ATT_MONGO_HOST: localhost
+      TREINETIC_ATT_MONGO_PORT: 5672
 
+
+  #  rabbitmq:
+  #    ports:
+  #      - ":"
+  #    expose:
+  #      - ":"
+  #    image:
+  #    environment:
 
   #   environment :
   #     CONFIG_URL: http://viconfigserver:4090
