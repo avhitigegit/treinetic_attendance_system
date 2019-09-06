@@ -1,12 +1,12 @@
 FROM openjdk:11
 #Add the jar file which is build by our Application  /path want to add(eg: as root directory)
-ADD /target/treinetic-attendance-system.jar /treinetic-attendance-system.jar
+ADD /target/treinetic_attendance_system.jar /treinetic_attendance_system.jar
 #port want to expose
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "treinetic-attendance-system.jar"]
+ENTRYPOINT ["java", "-jar", "treinetic_attendance_system.jar"]
 
 #To create a docker image from terminal
-#docker build -f Dockerfile -t treinetic-attendance-system .
+#docker build -f Dockerfile -t treinetic_attendance_system .
 #After buid Then up the compose
 
 # -f  = The docker file of the project
