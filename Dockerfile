@@ -3,7 +3,8 @@ FROM openjdk:11
 ADD /target/treinetic_attendance_system.jar /treinetic_attendance_system.jar
 #port want to expose
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "treinetic_attendance_system.jar"]
+#ENTRYPOINT ["java", "-jar", "treinetic_attendance_system.jar"]
+ENTRYPOINT ["java", "-jar", "*.jar"]
 
 #To create a docker image from terminal
 #docker build -f Dockerfile -t treinetic_attendance_system .
