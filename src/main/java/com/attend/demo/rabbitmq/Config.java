@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
-
     static final String topicExchangeName = "spring-boot-exchange";
 
     static final String queueName = "spring-boot";

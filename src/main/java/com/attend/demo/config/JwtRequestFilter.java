@@ -63,6 +63,9 @@ public class JwtRequestFilter extends OncePerRequestFilter implements HandlerInt
             // authentication
             if (jwtTokenUtil.validateToken(jwtToken, employee)) {
                 CurrentEmployee.setEmployee(employee);
+//                if (CurrentEmployee.getEmployee().equals(employee)){
+//                    chain.doFilter(request, response);
+//                }
                 //In securitycontextholder set the authenticated current logged user.
                 chain.doFilter(request, response);
             }

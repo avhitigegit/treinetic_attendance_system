@@ -30,7 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/employee/pwd-reset/{email}",
                 "/employee/pwd-reset/verification"
         ).permitAll().
-//                antMatchers("/admin/**").hasRole("ADMIN").
+//                antMatchers("/**").hasRole("ADMIN").
+//        antMatchers("/employee/**").hasRole("USER").
+//        antMatchers("/admin/** ").hasRole("ADMIN").
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to
